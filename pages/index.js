@@ -31,13 +31,12 @@ export default function Home() {
                 <meta property="og:image" content="/profile-picture.png"/>
                 <meta property="og:type" content="website"/>
                 <meta property="og:description"
-                      content="Worked as Software Engineer and Software Architect in projects. For several years worked in the field of e-commerce. Has rich experience in server-side development, building reactive and scalable systems based on microservice architecture."/>
-
+                      content="Passionate Software Engineer with 5-year Computer Science degree and 6 years expirience"/>
                 <meta property="og:title" content="Oleksandr Balyshyn, Software Engineer"/>
                 <meta property="og:url" content="https://readme.worxbend.com"/>
                 <meta property="og:type" content="website"/>
                 <meta property="og:description"
-                      content="Worked as Software Engineer and Software Architect in projects. For several years worked in the field of e-commerce. Has rich experience in server-side development, building reactive and scalable systems based on microservice architecture."/>
+                      content="Passionate Software Engineer with 5-year Computer Science degree and 6 years expirience"/>
                 <meta property="og:image" content="/profile-picture.png"/>
             </Head>
 
