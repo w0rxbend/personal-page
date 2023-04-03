@@ -46,7 +46,7 @@ export default function Home() {
                 </h1>
 
                 <div className={styles.grid}>
-
+                    Welcome
                 </div>
             </main>
 
