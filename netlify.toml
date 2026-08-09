@@ -1,2 +1,36 @@
+# Netlify config. The site also deploys to GitHub Pages from
+# .github/workflows/deploy-pages.yml; both publish this repository verbatim,
+# so the two stay in step without any extra coordination.
+
 [build]
+  # Static site — nothing to compile. Everything in the repo root is published
+  # as-is.
   publish = "."
+  command = ""
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=(), interest-cohort=()"
+
+# HTML always revalidates so a redeploy is picked up immediately.
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Hand-written assets change with the site; keep the window short.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+# Vendored libraries are version-pinned and only change when deliberately
+# refreshed, so they can be cached hard.
+[[headers]]
+  for = "/assets/vendor/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, immutable"

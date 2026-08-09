@@ -1,0 +1,81 @@
+name: Deploy to GitHub Pages
+
+# The site is static — HTML, CSS and hand-written JavaScript with two vendored
+# libraries. There is nothing to compile, so this workflow uploads the
+# repository as-is and lets GitHub serve it.
+#
+# One-time setup, in the repository's Settings → Pages:
+#   Build and deployment → Source → "GitHub Actions"
+# Without that, the deploy step fails with "Pages site not found".
+
+on:
+  push:
+    branches: [main]
+  # Lets you redeploy from the Actions tab without pushing a commit.
+  workflow_dispatch:
+
+# GITHUB_TOKEN needs these to publish. `id-token` is required by
+# actions/deploy-pages for its OIDC handshake with the Pages service.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never let two deploys race. `cancel-in-progress: false` means a queued deploy
+# waits for the running one rather than replacing it, so a fast follow-up push
+# cannot publish out of order.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Verify the entry point and its assets exist
+        # A missing asset here would publish a broken page that still reports
+        # success, so fail loudly instead.
+        run: |
+          set -euo pipefail
+          required=(
+            index.html
+            assets/styles.css
+            assets/app.js
+            assets/search.js
+            assets/telemetry.js
+            assets/data/catalog.js
+            assets/data/profile.js
+            assets/fx/engine.js
+            assets/fx/network.js
+            assets/fx/stars.js
+            assets/fx/glyphs.js
+            assets/vendor/three.min.js
+            assets/vendor/pixi.min.js
+          )
+          missing=0
+          for f in "${required[@]}"; do
+            if [ ! -s "$f" ]; then
+              echo "::error file=$f::required file is missing or empty"
+              missing=1
+            fi
+          done
+          [ "$missing" -eq 0 ] || exit 1
+          echo "All ${#required[@]} required files present."
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload the site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
