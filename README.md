@@ -9,7 +9,7 @@ It is one HTML file, one stylesheet, and about a dozen small JavaScript files.
 There is no framework, no bundler and no package manager, and nothing is
 compiled or minified — the code in this repository is the code the browser
 runs. One file is generated: `assets/data/catalog.js`, the project data, which
-a small Python script builds from a plain list of repository names. See
+a small Python script builds from a plain file of selection rules. See
 [Regenerating the project catalogue](#regenerating-the-project-catalogue).
 
 ---
@@ -19,7 +19,7 @@ a small Python script builds from a plain list of repository names. See
 | Section | What is in it |
 | --- | --- |
 | **Hero** | Name, current focus, and headline numbers from nine years of backend work |
-| **Projects** | Every repository listed in `tracked-repos.txt`, grouped into six domains, with client-side search |
+| **Projects** | The repositories `catalog-rules.txt` selects, grouped into six domains, with client-side search |
 | **Experience** | Employment history — LotusFlare, EPAM, Unicorn, OmnieSoft |
 | **Skills** | Languages, data and messaging, infrastructure, weighted by years of production use |
 | **Profiles** | The three GitHub accounts and what lives on each |
@@ -44,11 +44,11 @@ itself, next to each heading):
 - **Scala, JVM & Libraries** — typed API clients, a Scala 3 binding for
   OpenCV, a terminal-UI toolkit, and the Mill monorepo the smaller libraries
   are cut from.
-- **Web, Dashboards & Apps** — front-ends for the hardware and services
-  above, plus a few standalone applications.
-- **Language Labs & Ports** — learning by porting. Whole libraries
-  rewritten into unfamiliar languages, and the scratch space where that
-  happens.
+- **Web, Dashboards & Apps** — desktop and browser front-ends for the
+  hardware and services above, plus the odd standalone application.
+- **Language Labs & Ports** — whole libraries rewritten into an unfamiliar
+  language to find out what that language forces you to do differently, with
+  the output checked against the original bit for bit.
 
 ---
 
@@ -77,7 +77,7 @@ index.html                  markup and the mount points the scripts fill
 favicon.svg
 netlify.toml                headers and cache policy for the Netlify deploy
 .nojekyll                   opt out of Jekyll on GitHub Pages
-tracked-repos.txt           which repositories the site shows — one per line
+catalog-rules.txt           rules deciding which repositories the site shows
 data/
   catalog.json              the written content for every catalogued repository
 tools/
@@ -218,23 +218,49 @@ the store is capped at 5,000 events and pruned while the browser is idle.
 
 | File | What it decides |
 | --- | --- |
-| `tracked-repos.txt` | **which** repositories the site shows, and in what order — one `owner/name` per line, `#` starts a comment |
-| `data/catalog.json` | **what each card says** — tagline, summary, highlights, stack, tier, category — for every repository ever catalogued, tracked or not |
+| `catalog-rules.txt` | **which** repositories the site shows, as rules rather than a list — "everything written in Rust", "nothing marked as a lab" |
+| `data/catalog.json` | **what each card says** — tagline, summary, highlights, stack, tier, category — for every repository ever catalogued, shown or not |
 
-Splitting them this way means dropping a repository from the site is deleting
-one line, and putting it back later is adding that line again. The writing is
-never thrown away, so nothing has to be rewritten from scratch.
+Nothing written is ever thrown away. A repository that drops out of the
+selection keeps its card and returns the moment a rule picks it up again.
+
+### The rules
+
+A rule is two words — `include` or `exclude`, then a selector — and **the last
+rule that matches a repository wins**. Broad strokes at the top, exceptions at
+the bottom. A repository that no rule matches is not shown, so nothing is
+published by accident.
+
+```
+exclude all                              # start from nothing
+include tier:flagship                    # the documented, released work
+include cat:iot                          # a whole domain
+include lang:Rust                        # a whole language
+exclude tier:lab                         # ...but no playgrounds or stubs
+include repo:w0rxbend/FreeCAD-Projects   # ...except this one
+```
+
+Selectors are `all`, `repo:owner/name`, `owner:name`, `lang:X`, `cat:X`,
+`tier:X`, `tag:X`, `topic:X` and `stack:X`, matched without regard to case.
+The three tiers are the judgement recorded in `data/catalog.json` when a card
+was written: **flagship** (documented, released, tested), **solid** (real and
+working, less ceremony) and **lab** (a playground, a sandbox, a one-commit
+stub).
 
 ```bash
-# Rebuild after editing either file
+# See what the rules do before committing anything: every catalogued
+# repository, whether it is shown, and the rule that decided it
+python3 tools/build-catalog.py --explain
+
+# Rebuild after editing either input
 python3 tools/build-catalog.py
 
-# Verify the generated file is in step with its inputs — writes nothing,
-# exits 1 if it is stale. This runs in CI before every deploy.
+# Verify the generated files are in step with their inputs — writes nothing,
+# exits 1 if stale. This runs in CI before every deploy.
 python3 tools/build-catalog.py --check
 
-# Add a stub card for any tracked repository that has none yet, filled in
-# from the GitHub REST API. Needs the GitHub CLI (`gh auth login`).
+# Add a stub card for any repository the rules could select but which has
+# none yet. Needs the GitHub CLI (`gh auth login`).
 python3 tools/build-catalog.py --fetch
 
 # As --fetch, and also re-read stars, language, topics and last-push date
@@ -242,11 +268,13 @@ python3 tools/build-catalog.py --fetch
 python3 tools/build-catalog.py --refresh
 ```
 
-Adding a repository is four steps: put its `owner/name` in `tracked-repos.txt`,
-run `--fetch` to pull its metadata into `data/catalog.json` as a stub, write
-the stub's tagline, summary and highlights by hand, then run the build. The
-build **refuses** to produce a card with an empty tagline or summary, so a
-half-finished entry fails loudly instead of shipping as a blank tile.
+New repositories are found rather than remembered. The `discover <account>`
+lines at the bottom of `catalog-rules.txt` tell `--fetch` which GitHub accounts
+to ask about, so something pushed last week turns up as a stub card without
+anyone having to notice it exists. Writing that stub's tagline, summary and
+highlights is the only manual step — and the build **refuses** to emit a card
+with either left empty, so a half-finished entry fails loudly instead of
+shipping as a blank tile.
 
 Every number the page states about itself is derived at build time and never
 stored: the project count, the flagship count, the number of distinct
