@@ -68,6 +68,14 @@ jobs:
           [ "$missing" -eq 0 ] || exit 1
           echo "All ${#required[@]} required files present."
 
+      - name: Verify the generated catalog matches its inputs
+        # assets/data/catalog.js is built from tracked-repos.txt and
+        # data/catalog.json. Editing an input and forgetting to run the build
+        # would publish a page that disagrees with the repository, so check it
+        # here rather than finding out from the live site. Writes nothing:
+        # ubuntu-latest ships python3, and the script needs no packages.
+        run: python3 tools/build-catalog.py --check
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
