@@ -1,13 +1,16 @@
 # personal-page
 
-The source of my personal site: a résumé and a browsable catalogue of every
-public repository I maintain across three GitHub accounts.
+The source of my personal site: a résumé and a browsable catalogue of the
+public repositories I maintain across three GitHub accounts.
 
 **Live:** <https://w0rxbend.github.io/personal-page/>
 
 It is one HTML file, one stylesheet, and about a dozen small JavaScript files.
-There is no framework, no bundler, no build step and no package manager. The
-code in this repository is the code the browser runs.
+There is no framework, no bundler and no package manager, and nothing is
+compiled or minified — the code in this repository is the code the browser
+runs. One file is generated: `assets/data/catalog.js`, the project data, which
+a small Python script builds from a plain list of repository names. See
+[Regenerating the project catalogue](#regenerating-the-project-catalogue).
 
 ---
 
@@ -16,7 +19,7 @@ code in this repository is the code the browser runs.
 | Section | What is in it |
 | --- | --- |
 | **Hero** | Name, current focus, and headline numbers from nine years of backend work |
-| **Projects** | All 80 public repositories, grouped into six domains, with client-side search |
+| **Projects** | Every repository listed in `tracked-repos.txt`, grouped into six domains, with client-side search |
 | **Experience** | Employment history — LotusFlare, EPAM, Unicorn, OmnieSoft |
 | **Skills** | Languages, data and messaging, infrastructure, weighted by years of production use |
 | **Profiles** | The three GitHub accounts and what lives on each |
@@ -25,24 +28,25 @@ code in this repository is the code the browser runs.
 
 ### The project catalogue
 
-The six domains, and what each collects:
+The six domains, and what each collects (the live counts are on the page
+itself, next to each heading):
 
-- **Streaming & Broadcast** (15) — control surfaces for OBS Studio (the
+- **Streaming & Broadcast** — control surfaces for OBS Studio (the
   open-source live-streaming program), terminal chat clients for Twitch and
   YouTube, and browser-source overlays.
-- **IoT, Sensors & Embedded** (18) — AirGradient air-quality monitoring across
+- **IoT, Sensors & Embedded** — AirGradient air-quality monitoring across
   five client platforms, ESP32 camera firmware with a hand-rolled binary TCP
   protocol and the Go server that receives it, and assorted microcontroller
   hardware.
-- **Linux Tooling & Workstation** (10) — declarative provisioning: one YAML
+- **Linux Tooling & Workstation** — declarative provisioning: one YAML
   profile, a dry-run plan you read before anything happens, and the same
   machine on every box.
-- **Scala, JVM & Libraries** (14) — typed API clients, a Scala 3 binding for
+- **Scala, JVM & Libraries** — typed API clients, a Scala 3 binding for
   OpenCV, a terminal-UI toolkit, and the Mill monorepo the smaller libraries
   are cut from.
-- **Web, Dashboards & Apps** (10) — front-ends for the hardware and services
+- **Web, Dashboards & Apps** — front-ends for the hardware and services
   above, plus a few standalone applications.
-- **Language Labs & Ports** (13) — learning by porting. Whole libraries
+- **Language Labs & Ports** — learning by porting. Whole libraries
   rewritten into unfamiliar languages, and the scratch space where that
   happens.
 
@@ -73,6 +77,11 @@ index.html                  markup and the mount points the scripts fill
 favicon.svg
 netlify.toml                headers and cache policy for the Netlify deploy
 .nojekyll                   opt out of Jekyll on GitHub Pages
+tracked-repos.txt           which repositories the site shows — one per line
+data/
+  catalog.json              the written content for every catalogued repository
+tools/
+  build-catalog.py          builds assets/data/catalog.js from those two files
 .github/workflows/
   deploy-pages.yml          publishes the repository to GitHub Pages on push
 assets/
@@ -81,7 +90,7 @@ assets/
   search.js                 the search engine — inverted index, no dependencies
   telemetry.js              local-only analytics on IndexedDB
   data/
-    catalog.js              generated: the 80 project entries
+    catalog.js              generated: the project entries the page renders
     profile.js              résumé, skills, education, accounts
   fx/
     engine.js               background effect manager — tiers, palette, lifecycle
@@ -204,35 +213,61 @@ the store is capped at 5,000 events and pruned while the browser is idle.
 
 ## Regenerating the project catalogue
 
-`assets/data/catalog.js` is generated, not hand-maintained. It is built from
-the GitHub REST API plus each repository's own README:
+`assets/data/catalog.js` is generated, not hand-maintained. It is built by
+`tools/build-catalog.py` from two files that *are* hand-maintained:
+
+| File | What it decides |
+| --- | --- |
+| `tracked-repos.txt` | **which** repositories the site shows, and in what order — one `owner/name` per line, `#` starts a comment |
+| `data/catalog.json` | **what each card says** — tagline, summary, highlights, stack, tier, category — for every repository ever catalogued, tracked or not |
+
+Splitting them this way means dropping a repository from the site is deleting
+one line, and putting it back later is adding that line again. The writing is
+never thrown away, so nothing has to be rewritten from scratch.
 
 ```bash
-# 1. Repository metadata for all three accounts
-for u in worxbend w0rxbend oleksandr-balyshyn; do
-  gh api "users/$u/repos?per_page=100&sort=updated" \
-    --jq ".[] | select(.fork==false) | {owner:\"$u\", name:.name, desc:.description,
-          lang:.language, stars:.stargazers_count, topics:.topics,
-          updated:.updated_at, homepage:.homepage}"
-done | jq -s '.' > repos.json
+# Rebuild after editing either file
+python3 tools/build-catalog.py
 
-# 2. Each README, for the written summaries
-jq -r '.[] | "\(.owner)/\(.name)"' repos.json | while read slug; do
-  gh api "repos/$slug/readme" --jq '.content' | base64 -d > "readmes/${slug/\//_}.md"
-done
+# Verify the generated file is in step with its inputs — writes nothing,
+# exits 1 if it is stale. This runs in CI before every deploy.
+python3 tools/build-catalog.py --check
+
+# Add a stub card for any tracked repository that has none yet, filled in
+# from the GitHub REST API. Needs the GitHub CLI (`gh auth login`).
+python3 tools/build-catalog.py --fetch
+
+# As --fetch, and also re-read stars, language, topics and last-push date
+# for the repositories that already have cards.
+python3 tools/build-catalog.py --refresh
 ```
 
-Star counts, languages and dates come straight from the API. Summaries and
-highlights are written against each repository's README, and for repositories
-with little or no README, against the actual source tree.
+Adding a repository is four steps: put its `owner/name` in `tracked-repos.txt`,
+run `--fetch` to pull its metadata into `data/catalog.json` as a stub, write
+the stub's tagline, summary and highlights by hand, then run the build. The
+build **refuses** to produce a card with an empty tagline or summary, so a
+half-finished entry fails loudly instead of shipping as a blank tile.
+
+Every number the page states about itself is derived at build time and never
+stored: the project count, the flagship count, the number of distinct
+languages, the star total, the per-domain counts and the language breakdown.
+The four places `index.html` prints the project count in plain text — the meta
+description, the social-card description, the hero paragraph and the search
+placeholder, all of which are read before any JavaScript runs — are rewritten
+by the same build. This is what stops the page advertising "80 projects" above
+a grid of 75.
+
+Summaries and highlights are written against each repository's README, and for
+repositories with little or no README, against the actual source tree.
 
 **Where a repository turned out to be a one-commit stub, its entry says so and
 carries no highlights.** That is deliberate. Padding a stub into sounding like
 a finished product is the failure this catalogue is built to avoid, and seven
 entries are honest about being minimal.
 
-Editing a summary by hand is fine. Editing `stars` is not — the next
-regeneration overwrites it.
+Editing a summary by hand is fine — that is where summaries live. Editing
+`stars`, `lang`, `updated` or `topics` is not: `--refresh` overwrites all four
+from the API.
 
 ---
 

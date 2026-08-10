@@ -1,151 +1,35 @@
-/* ============================================================================
-   Project catalog — GENERATED FILE, DO NOT EDIT BY HAND.
-
-   Built by tools/build-catalog.py from two inputs:
-
-     tracked-repos.txt   which repositories are on the site, and in what order
-     data/catalog.json   the written content for every catalogued repository
-
-   To change what appears here, edit one of those and run:
-
-     python3 tools/build-catalog.py
-
-   Stars, language and last-updated come from the GitHub REST API via
-   `--fetch`. The summaries and highlights were written against each
-   repository's own README, and for repositories with little or no README,
-   against the actual source tree.
-
-   Where a repository turned out to be a one-commit stub, the entry says so and
-   carries no highlights. That is deliberate: padding a stub into sounding like
-   a product is the failure mode this catalog is built to avoid.
-   ========================================================================= */
-
-window.WB_CATALOG = {
+{
   "generatedAt": "2026-08-10",
-  "totals": {
-    "projects": 75,
-    "flagship": 22,
-    "languages": 16,
-    "stars": 33
-  },
   "categories": [
     {
       "key": "streaming",
       "label": "Streaming & Broadcast",
-      "blurb": "Terminal and desktop control surfaces for OBS Studio, plus chat clients and browser-source overlays for Twitch and YouTube.",
-      "count": 15
+      "blurb": "Terminal and desktop control surfaces for OBS Studio, plus chat clients and browser-source overlays for Twitch and YouTube."
     },
     {
       "key": "iot",
       "label": "IoT, Sensors & Embedded",
-      "blurb": "Air-quality monitoring across five client platforms, ESP32 camera firmware with its own binary TCP protocol and Go frame server, and assorted microcontroller hardware.",
-      "count": 18
+      "blurb": "Air-quality monitoring across five client platforms, ESP32 camera firmware with its own binary TCP protocol and Go frame server, and assorted microcontroller hardware."
     },
     {
       "key": "linux",
       "label": "Linux Tooling & Workstation",
-      "blurb": "Declarative workstation provisioning: one YAML profile, a dry-run plan you read first, and the same machine on every box.",
-      "count": 10
+      "blurb": "Declarative workstation provisioning: one YAML profile, a dry-run plan you read first, and the same machine on every box."
     },
     {
       "key": "scala",
       "label": "Scala, JVM & Libraries",
-      "blurb": "Typed API clients, an OpenCV binding, a terminal-UI toolkit, and the Mill monorepo the smaller libraries are cut from.",
-      "count": 9
+      "blurb": "Typed API clients, an OpenCV binding, a terminal-UI toolkit, and the Mill monorepo the smaller libraries are cut from."
     },
     {
       "key": "web",
       "label": "Web, Dashboards & Apps",
-      "blurb": "Front-end surfaces for the hardware and services above, plus a few standalone applications.",
-      "count": 10
+      "blurb": "Front-end surfaces for the hardware and services above, plus a few standalone applications."
     },
     {
       "key": "labs",
       "label": "Language Labs & Ports",
-      "blurb": "Learning by porting. Whole libraries rewritten into unfamiliar languages, and the scratch space where the rewriting happens.",
-      "count": 13
-    }
-  ],
-  "langs": [
-    {
-      "lang": "Scala",
-      "count": 10,
-      "color": "#c22d40"
-    },
-    {
-      "lang": "Rust",
-      "count": 9,
-      "color": "#dea584"
-    },
-    {
-      "lang": "C++",
-      "count": 8,
-      "color": "#f34b7d"
-    },
-    {
-      "lang": "Go",
-      "count": 8,
-      "color": "#00ADD8"
-    },
-    {
-      "lang": "Python",
-      "count": 8,
-      "color": "#3572A5"
-    },
-    {
-      "lang": "TypeScript",
-      "count": 8,
-      "color": "#3178c6"
-    },
-    {
-      "lang": "Crystal",
-      "count": 3,
-      "color": "#8f9fa8"
-    },
-    {
-      "lang": "Java",
-      "count": 3,
-      "color": "#b07219"
-    },
-    {
-      "lang": "JavaScript",
-      "count": 3,
-      "color": "#f1e05a"
-    },
-    {
-      "lang": "Flix",
-      "count": 2,
-      "color": "#dc7d00"
-    },
-    {
-      "lang": "Kotlin",
-      "count": 2,
-      "color": "#A97BFF"
-    },
-    {
-      "lang": "Shell",
-      "count": 2,
-      "color": "#89e051"
-    },
-    {
-      "lang": "C",
-      "count": 1,
-      "color": "#8a8a8a"
-    },
-    {
-      "lang": "CSS",
-      "count": 1,
-      "color": "#8f6bbf"
-    },
-    {
-      "lang": "Elixir",
-      "count": 1,
-      "color": "#a389b8"
-    },
-    {
-      "lang": "Zig",
-      "count": 1,
-      "color": "#ec915c"
+      "blurb": "Learning by porting. Whole libraries rewritten into unfamiliar languages, and the scratch space where the rewriting happens."
     }
   ],
   "projects": [
@@ -2377,6 +2261,126 @@ window.WB_CATALOG = {
       "homepage": ""
     },
     {
+      "id": "w0rxbend/ai-garbage",
+      "owner": "w0rxbend",
+      "name": "ai-garbage",
+      "title": "ai-garbage",
+      "tagline": "Scala examples of OOP fundamentals, SOLID and all 23 Gang-of-Four patterns, aimed at AI systems",
+      "summary": "A teaching repository with two audiences. Humans read worked Scala examples of the four object-oriented programming (OOP) pillars, the five SOLID principles, and all twenty-three Gang-of-Four design patterns; AI coding agents load the same material as skills in the SKILL.md format used by Claude Code. Every example is framed around problems that appear in generative-AI systems \u2014 large language model (LLM) clients, content moderation, tool-using agents \u2014 with a multi-agent swing-trading pipeline as the capstone.",
+      "highlights": [
+        "Pattern catalog is complete: 5 creational, 7 structural and 11 behavioral examples, one Scala file each",
+        "Skills cover oop-design, solid-principles, gof-patterns, refactoring and Scala 3 direct-style conventions",
+        "Examples name their AI use case directly: RateLimitingProxy, LLMClientDecorators, EmbeddingCacheFlyweight",
+        "Skills are activated in-repo through symlinks under .claude/skills/"
+      ],
+      "tags": [
+        "design-patterns",
+        "scala3",
+        "solid",
+        "oop",
+        "agent-skills",
+        "llm",
+        "refactoring"
+      ],
+      "stack": [
+        "Scala 3",
+        "Markdown",
+        "Claude Code agent skills"
+      ],
+      "tier": "solid",
+      "status": "",
+      "category": "scala",
+      "categoryLabel": "Scala, JVM & Libraries",
+      "lang": "Scala",
+      "langColor": "#c22d40",
+      "stars": 0,
+      "updated": "2026-07-12",
+      "topics": [],
+      "url": "https://github.com/w0rxbend/ai-garbage",
+      "homepage": ""
+    },
+    {
+      "id": "w0rxbend/compression",
+      "owner": "w0rxbend",
+      "name": "compression",
+      "title": "compression",
+      "tagline": "Lichess chess-clock and move compression algorithms, migrated from Java to Scala",
+      "summary": "A port of lichess.org's compression library, which shrinks stored chess games and clock histories. Only the language syntax was translated from Java to Scala; the README is upfront that the original design and paradigms were kept, so the result is deliberately not idiomatic Scala. The repository links the two lichess developer blog posts describing the clock-history format and the 275% game-compression improvement the algorithms achieved.",
+      "highlights": [
+        "Language-only migration: the README states the Java design and paradigms were preserved on purpose",
+        "JMH benchmark suite runs via sbt 'benchmarks/jmh:run -i 5 -wi 3 -f1 -t1 org.lichess.compression.benchmark.*'",
+        "Licensed AGPL-3.0-or-later, matching the upstream lichess-org/compression project"
+      ],
+      "tags": [
+        "lichess",
+        "chess",
+        "compression",
+        "scala",
+        "jmh",
+        "port"
+      ],
+      "stack": [
+        "Scala",
+        "sbt",
+        "JMH (Java Microbenchmark Harness)",
+        "AGPL-3.0"
+      ],
+      "tier": "lab",
+      "status": "port of an upstream project, kept non-idiomatic by design",
+      "category": "scala",
+      "categoryLabel": "Scala, JVM & Libraries",
+      "lang": "Scala",
+      "langColor": "#c22d40",
+      "stars": 0,
+      "updated": "2026-08-09",
+      "topics": [],
+      "url": "https://github.com/w0rxbend/compression",
+      "homepage": ""
+    },
+    {
+      "id": "w0rxbend/data-engineering",
+      "owner": "w0rxbend",
+      "name": "data-engineering",
+      "title": "Data Engineering Sandbox",
+      "tagline": "Kafka, Kafka Connect and Apache Flink experiments with a Docker Compose lab environment",
+      "summary": "A personal scratch workspace, described by its own repository description as \"Some random stuff with Kafka, KafkaConnect and Apache Flink\". It holds three loosely related pieces: an Apache Flink streaming job in Scala that reads a Kafka topic and writes files to S3-compatible storage, a copy of a third-party Kafka Connect partitioner written in Java, and a docker-compose environment that starts Kafka, Flink, MinIO and related tooling. The top-level README explains how to set up Java and Scala versions and how to start the environment; the Flink sub-project's own README file is empty. Most of the commit history is automated dependency-update merges.",
+      "highlights": [
+        "flink-kafka-s3sink-job reads a Kafka source (topic test_topic, broker kafka:29092) with event-time semantics, exactly-once checkpointing every 15 seconds and a RocksDB state backend, then writes through a StreamingFileSink; build.sbt sets the assembly main class to demo.flink.Main.",
+        "kafka-connect-field-and-time-partitioner is a copy of third-party work: the Java package is com.canelmas.kafka.connect, it ships its own Apache License 2.0 file, and it builds with Maven against Confluent's kafka-connect-storage-partitioner 11.2.16.",
+        "data-engineering-tools/docker-compose.yaml defines a 12-service local lab: ZooKeeper, Kafka, Schema Registry, a custom s3sink Connect image, MinIO, Flink jobmanager/taskmanager/client, AWS CLI, MinIO client, kafkactl and Redpanda Console.",
+        "The README and the build file disagree on the Scala version: the README says the Flink project needs Scala 2.12.19, while build.sbt pins scalaVersion to 2.13.14."
+      ],
+      "tags": [
+        "kafka",
+        "flink",
+        "stream-processing",
+        "scala",
+        "docker-compose"
+      ],
+      "stack": [
+        "Scala 2.13.14",
+        "sbt (with sbt-assembly)",
+        "Apache Flink 1.20.0",
+        "Apache Kafka clients 3.8.0",
+        "circe",
+        "Java 11 / Java 17 (via SDKMAN)",
+        "Maven",
+        "Docker Compose",
+        "MinIO"
+      ],
+      "tier": "lab",
+      "status": "Sandbox; 32 commits, last pushed 2026-08-07",
+      "category": "scala",
+      "categoryLabel": "Scala, JVM & Libraries",
+      "lang": "Scala",
+      "langColor": "#c22d40",
+      "stars": 2,
+      "updated": "2025-09-27",
+      "topics": [],
+      "url": "https://github.com/w0rxbend/data-engineering",
+      "homepage": ""
+    },
+    {
       "id": "w0rxbend/chronovault",
       "owner": "w0rxbend",
       "name": "chronovault",
@@ -2411,6 +2415,78 @@ window.WB_CATALOG = {
       "updated": "2025-05-01",
       "topics": [],
       "url": "https://github.com/w0rxbend/chronovault",
+      "homepage": ""
+    },
+    {
+      "id": "w0rxbend/kzonix-opencv-app",
+      "owner": "w0rxbend",
+      "name": "kzonix-opencv-app",
+      "title": "kzonix-opencv-app",
+      "tagline": "Akka Streams webcam pipeline over JavaCV, alongside a large mostly unused cascade library",
+      "summary": "A Scala experiment in wiring a webcam into Akka Streams, a library for processing data as a flow of elements with backpressure. The main runnable path is Main.scala: it opens a JavaCV `CanvasFrame` window, builds a 640x480 source from camera device 0, converts each frame to an OpenCV matrix, mirrors it horizontally, converts it back, and shows it in the window. The source itself is WebCam.scala, an actor that grabs frames only while there is downstream demand. Most of the rest of the tree is unfinished: FaceDetection, BodyDetection and HostDetectionResolver are empty objects and classes, and src/main/resources/detection holds 41 Haar, CUDA-Haar, LBP and HOG cascade XML files (faces, eyes, bodies, hands, licence plates) that no Scala code in the repository loads \u2014 the only cascade-loading code is a Java class, FaceDetecor.java, that Main never calls. A second Java entry point, CarDetection.java, is independently runnable and does background-subtraction contour detection in its own window. Haar/LBP/HOG cascades are pre-trained object-detection models that ship with OpenCV.",
+      "highlights": [
+        "The webcam source is a real backpressure-aware integration rather than a polling loop: WebCamFramePublisher only calls the blocking `grabber.grab()` while `totalDemand > 0`, and re-triggers itself with a private `Continue` message, so frames are pulled at the rate the downstream consumer can absorb them.",
+        "There is a version mismatch worth knowing about before building: build.sbt was bumped by Renovate to Akka 2.6.20 and Scala 2.13.9 in October 2022, while the code still uses the older `akka.stream.actor.ActorPublisher` and `ActorMaterializer` APIs, so the repository as published is not self-evidently compilable."
+      ],
+      "tags": [
+        "computer-vision",
+        "akka-streams",
+        "opencv",
+        "webcam",
+        "unfinished"
+      ],
+      "stack": [
+        "Scala 2.13.9",
+        "sbt",
+        "Akka Actor / Akka Stream 2.6.20",
+        "JavaCV",
+        "JavaCPP presets (flandmark)",
+        "OpenCV",
+        "ImageJ",
+        "ScalaTest",
+        "JUnit"
+      ],
+      "tier": "lab",
+      "status": "",
+      "category": "scala",
+      "categoryLabel": "Scala, JVM & Libraries",
+      "lang": "Scala",
+      "langColor": "#c22d40",
+      "stars": 1,
+      "updated": "2023-03-08",
+      "topics": [],
+      "url": "https://github.com/w0rxbend/kzonix-opencv-app",
+      "homepage": ""
+    },
+    {
+      "id": "w0rxbend/scala-concurrency",
+      "owner": "w0rxbend",
+      "name": "scala-concurrency",
+      "title": "scala-concurrency",
+      "tagline": "Producer/consumer exercise in Scala using a synchronized mailbox and wait/notify",
+      "summary": "A textbook exercise, not a project: five files totalling a few kilobytes, written over two days in January 2019. The whole program lives in a 1.6 KB Main.scala that starts one producer thread and one consumer thread sharing a `Pipe` object holding a single message slot. The pipe guards that slot with a plain Java monitor \u2014 `synchronized`, `wait()` and `notifyAll()` \u2014 and a helper that waits until an `empty` flag flips. The producer sends four fixed strings with a five-second pause between each, then a \"Finish\" sentinel that stops the consumer loop. It is the Producer/Consumer problem from the \"Guarded Blocks\" lesson of the Java tutorial, transcribed into Scala using Java threads rather than any Scala concurrency library.",
+      "highlights": [],
+      "tags": [
+        "learning-exercise",
+        "concurrency",
+        "producer-consumer",
+        "scala"
+      ],
+      "stack": [
+        "Scala 2.12.8",
+        "sbt 1.2.8",
+        "Java threads"
+      ],
+      "tier": "lab",
+      "status": "",
+      "category": "scala",
+      "categoryLabel": "Scala, JVM & Libraries",
+      "lang": "Scala",
+      "langColor": "#c22d40",
+      "stars": 1,
+      "updated": "2023-03-08",
+      "topics": [],
+      "url": "https://github.com/w0rxbend/scala-concurrency",
       "homepage": ""
     },
     {
@@ -3336,4 +3412,4 @@ window.WB_CATALOG = {
       "homepage": ""
     }
   ]
-};
+}
