@@ -1,0 +1,104 @@
+# ---------------------------------------------------------------------------
+# Catalogue rules — which repositories the site shows
+# ---------------------------------------------------------------------------
+# This file decides what appears in the project catalogue. Nothing else does.
+#
+# A rule is two words: `include` or `exclude`, then a selector.
+#
+#   include lang:Rust            every repository whose main language is Rust
+#   exclude tier:lab             nothing marked as a lab experiment
+#   include repo:owner/name      this one repository, by name
+#   exclude all                  everything (useful as a starting point)
+#
+# Selectors: all, repo:owner/name, owner:name, lang:X, cat:X, tier:X, tag:X,
+# topic:X, stack:X. Values are matched without regard to case.
+#
+# **The last rule that matches a repository wins.** Broad strokes go at the
+# top, exceptions at the bottom. A repository that no rule matches is not
+# shown, so nothing is ever published by accident.
+#
+# The tiers are a judgement about the repository, recorded in data/catalog.json
+# when its card was written:
+#
+#   flagship  documented, released, tested — work worth being judged on
+#   solid     real and working, in day-to-day use, less ceremony around it
+#   lab       a playground, a sandbox, a one-commit stub, an experiment
+#
+# See what any change does before committing it:
+#
+#   python3 tools/build-catalog.py --explain    # every repository, in or out,
+#                                               # and the rule that decided it
+#   python3 tools/build-catalog.py              # rebuild the site data
+#
+# `discover <account>` lines below tell `--fetch` which GitHub accounts to ask
+# about, so a repository pushed last week can be picked up without being named
+# here. Its card still has to be written by hand before it can be shown.
+# ---------------------------------------------------------------------------
+
+
+# --- Start from nothing ----------------------------------------------------
+# Opt in deliberately. The alternative — showing everything and subtracting —
+# means every new repository is published the moment it is created, whatever
+# state it is in.
+
+exclude all
+
+
+# --- The work worth being judged on ----------------------------------------
+# Anything marked flagship is shown whatever domain it belongs to.
+
+include tier:flagship
+
+
+# --- The domains I actually work in ----------------------------------------
+
+include cat:iot          # sensors, ESP32 firmware, AirGradient, hardware
+include cat:linux        # workstation provisioning, system bootstrap, CLI tools
+include cat:scala        # Scala and JVM libraries
+include cat:streaming    # OBS and Twitch tooling
+
+
+# --- The languages I actually write ----------------------------------------
+# These reach outside the domains above — a Rust tool that happens to live in
+# the web category is still a Rust tool.
+
+include lang:Crystal
+include lang:Rust
+include lang:Scala
+include lang:C++
+
+
+# --- Nothing half-finished -------------------------------------------------
+# Playgrounds, sandboxes, language demos and one-commit stubs. This runs after
+# the domain and language rules on purpose, so it removes what they swept in.
+# It cannot touch flagships, because no flagship is marked as a lab.
+
+exclude tier:lab
+
+
+# --- Out by name -----------------------------------------------------------
+# Written in a language the rules above include, but not a project: teaching
+# material, worked examples of design patterns for humans and coding agents to
+# read. It belongs in a reading list rather than in a portfolio.
+
+exclude repo:w0rxbend/ai-garbage
+
+
+# --- In by name ------------------------------------------------------------
+# Hardware and CAD work: no source language for GitHub to report, and no
+# release to point at, but the models are real and printed.
+
+include repo:w0rxbend/FreeCAD-Projects
+
+# Frostfire is a C++ front-end with a Python back-end. The language rules pick
+# up the front-end alone, and half a project on a page is worse than none.
+
+include repo:worxbend/frostfire-backend
+
+
+# --- Accounts to scan for new repositories ---------------------------------
+# Only used by `--fetch`; these lines show nothing on their own.
+
+discover worxbend
+discover w0rxbend
+discover oleksandr-balyshyn

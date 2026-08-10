@@ -24,12 +24,12 @@
     {
       "key": "web",
       "label": "Web, Dashboards & Apps",
-      "blurb": "Front-end surfaces for the hardware and services above, plus a few standalone applications."
+      "blurb": "Desktop and browser front-ends for the hardware and services above, plus the odd standalone application."
     },
     {
       "key": "labs",
       "label": "Language Labs & Ports",
-      "blurb": "Learning by porting. Whole libraries rewritten into unfamiliar languages, and the scratch space where the rewriting happens."
+      "blurb": "Whole libraries rewritten into an unfamiliar language to find out what that language forces you to do differently \u2014 with the output checked against the original bit for bit."
     }
   ],
   "projects": [
