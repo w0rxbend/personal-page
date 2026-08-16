@@ -11,7 +11,7 @@
      4.  motion & fx      the two performance dials
      5.  reveal           IntersectionObserver entrance animations
      6.  catalog          render, search, facets, URL state
-     7.  résumé           experience, skills, education, profiles
+     7.  résumé           experience, skills, education
      8.  palette          the Ctrl-K command menu
      9.  drawer           settings panel, including the telemetry controls
      10. misc             scroll progress, nav highlighting, hero rotator
@@ -625,35 +625,6 @@
     }).join("");
   }
 
-  function renderAccounts() {
-    var intro = $("#os-intro");
-    if (intro && PROFILE.person && PROFILE.person.osIntro) {
-      intro.textContent = PROFILE.person.osIntro;
-    }
-
-    var host = $("#profile-grid");
-    if (!host || !PROFILE.accounts) return;
-    host.innerHTML = PROFILE.accounts.map(function (a) {
-      var picks = a.picks.map(function (p) { return '<span class="chip">' + esc(p) + "</span>"; }).join("");
-      var site = a.site
-        ? '<span><a href="' + esc(a.site) + '" target="_blank" rel="noopener noreferrer">site</a></span>'
-        : "";
-      return (
-        '<article class="profile-card reveal">' +
-          '<h3 class="profile-handle"><a href="' + esc(a.url) + '" target="_blank" rel="noopener noreferrer">@' + esc(a.handle) + "</a></h3>" +
-          '<div class="profile-role">' + esc(a.role) + "</div>" +
-          '<p class="profile-note">' + esc(a.note) + "</p>" +
-          '<div class="chips">' + picks + "</div>" +
-          '<div class="profile-stats">' +
-            "<span>" + a.repos + " repos</span>" +
-            "<span>" + a.followers + " followers</span>" +
-            site +
-          "</div>" +
-        "</article>"
-      );
-    }).join("");
-  }
-
   /* ======================================================= 8. command palette */
 
   var palette = {
@@ -1110,7 +1081,6 @@
     renderExperience();
     renderSkills();
     renderEducation();
-    renderAccounts();
     wireMetrics();
 
     wirePalette();

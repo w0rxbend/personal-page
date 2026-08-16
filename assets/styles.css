@@ -9,7 +9,7 @@
      5.  Hero
      6.  Catalog             search, facets, project cards
      7.  Résumé              experience, skills, education
-     8.  Profiles & contact
+     8.  Contact
      9.  Footer
      10. Motion & responsive
 
@@ -582,6 +582,60 @@ kbd {
 .hero {
   position: relative;
   padding-block: clamp(64px, 12vh, 132px) clamp(48px, 8vh, 96px);
+}
+
+/* Two columns once there is room: copy on the left, plasma orb on the right.
+   Below that width the orb column is removed entirely — it is decoration, and
+   a phone should not be asked to run a second WebGL context on top of the
+   background layers. */
+.hero-copy { min-width: 0; }
+.hero-orb { display: none; }
+
+@media (min-width: 1080px) {
+  .hero-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 400px);
+    gap: clamp(32px, 4vw, 64px);
+    align-items: center;
+  }
+  .hero-orb {
+    display: block;
+    position: relative;
+    aspect-ratio: 1 / 1;
+    /* Stay invisible until the WebGL context is live, so there is no flash of
+       empty box while three.js is still downloading. */
+    opacity: 0;
+    transition: opacity .9s var(--ease-out) .15s;
+  }
+  .hero-orb.is-live { opacity: 1; }
+  .hero-orb canvas {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* --- particle headline -------------------------------------------------
+
+   When hero-text.js takes over, the real <h1> text is painted transparent
+   rather than removed: it still holds the layout the particles were sampled
+   from, and screen readers, find-in-page and text selection all keep working.
+   The canvas is stretched past the h1's box so particles shoved by the cursor
+   have somewhere to go instead of being clipped at the edge. */
+
+.hero-title.has-particles { position: relative; color: transparent; }
+.hero-title.has-particles .accent { background: none; color: transparent; }
+.hero-title.has-particles::selection,
+.hero-title.has-particles ::selection { color: var(--fg); }
+
+.hero-particles {
+  position: absolute;
+  top: -90px;
+  left: -90px;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .hero-status {
@@ -1208,56 +1262,6 @@ mark.hit {
 }
 .line-item .what { font-weight: 560; }
 .line-item .where { margin-top: 2px; color: var(--fg-muted); font-size: var(--step--1); }
-
-.profile-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
-  gap: var(--gap-3);
-}
-.profile-card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  padding: 22px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: color-mix(in oklab, var(--surface) 42%, transparent);
-  transition: transform .26s var(--ease-out), border-color .26s, background-color .26s;
-}
-.profile-card:hover {
-  transform: translateY(calc(-3px * var(--motion)));
-  border-color: var(--line-strong);
-  background: color-mix(in oklab, var(--surface) 70%, transparent);
-}
-.profile-handle {
-  font-family: var(--mono);
-  font-size: var(--step-1);
-  font-weight: 560;
-  letter-spacing: -0.02em;
-}
-.profile-handle a::after { content: ""; position: absolute; inset: 0; }
-.profile-role {
-  margin-top: 3px;
-  color: var(--accent);
-  font-family: var(--mono);
-  font-size: var(--step--1);
-}
-.profile-note {
-  margin-top: 12px;
-  color: var(--fg-muted);
-  font-size: var(--step--1);
-  line-height: 1.6;
-}
-.profile-stats {
-  display: flex;
-  gap: 16px;
-  margin-top: 16px;
-  padding-top: 14px;
-  border-top: 1px solid var(--line);
-  color: var(--fg-dim);
-  font-family: var(--mono);
-  font-size: 11px;
-}
 
 /* --- contact ----------------------------------------------------------- */
 

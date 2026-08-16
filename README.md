@@ -18,11 +18,10 @@ a small Python script builds from a plain file of selection rules. See
 
 | Section | What is in it |
 | --- | --- |
-| **Hero** | Name, current focus, and headline numbers from nine years of backend work |
-| **Projects** | The repositories `catalog-rules.txt` selects, grouped into six domains, with client-side search |
+| **Hero** | Name, current focus, headline numbers — with a particle headline and a morphing plasma orb |
 | **Experience** | Employment history — LotusFlare, EPAM, Unicorn, OmnieSoft |
 | **Skills** | Languages, data and messaging, infrastructure, weighted by years of production use |
-| **Profiles** | The three GitHub accounts and what lives on each |
+| **Projects** | The repositories `catalog-rules.txt` selects, grouped into six domains, with client-side search |
 | **Education** | M.Sc. and B.Sc., Khmelnitsky National University |
 | **Contact** | Email, phone, Telegram, GitHub |
 
@@ -87,11 +86,13 @@ tools/
 assets/
   styles.css                design tokens, six themes, every component
   app.js                    wiring: render, search, palette, settings, telemetry
+  hero-text.js              the headline rebuilt as a GPU particle cloud, three.js
+  hero-orb.js               the morphing plasma orb beside it, three.js
   search.js                 the search engine — inverted index, no dependencies
   telemetry.js              local-only analytics on IndexedDB
   data/
     catalog.js              generated: the project entries the page renders
-    profile.js              résumé, skills, education, accounts
+    profile.js              résumé, skills, education
   fx/
     engine.js               background effect manager — tiers, palette, lifecycle
     network.js              particle mesh, Canvas2D
@@ -163,6 +164,11 @@ A single dial, the **tier**, decides which layers exist:
 | `low` | none — the CSS grid and vignette still render | nothing |
 | `medium` | particle mesh on a 2D canvas | modest |
 | `high` | starfield and orbital mechanism (three.js), particle mesh, glyph rain (PixiJS) | two WebGL contexts |
+
+The two hero effects — `assets/hero-text.js` and `assets/hero-orb.js` — sit
+outside the layer registry, because they are anchored to elements in the page
+rather than to the full-viewport background stack. They read the same tier and
+the same `--fx-*` palette, and they run only at `high`.
 
 The tier is chosen from CPU cores, device memory, pointer type, the Save-Data
 header and the reduce-motion preference, and can be overridden in the settings

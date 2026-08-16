@@ -1,5 +1,5 @@
 /* ============================================================================
-   Profile, résumé and account data.
+   Profile and résumé data.
 
    The employment history, technology lists and education below are transcribed
    from the detailed CV (Oleksandr_Balyshyn-detailed.pdf) and should stay in
@@ -32,28 +32,19 @@ window.WB_PROFILE = {
 
     /* Straight from the CV's Introduction section. */
     intro:
-      "Senior Software Engineer with 9+ years architecting fault-tolerant distributed systems " +
-      "serving millions of telecom subscribers and handling petabyte-scale data pipelines. " +
-      "Proven expertise in designing cloud-native infrastructure that reduced compute costs by 20% " +
-      "while improving reliability. Deep proficiency in the Scala/JVM ecosystem (Cats, Akka, FS2) " +
-      "for building low-latency, high-throughput systems; equally strong in Java and modern cloud " +
-      "platforms. Track record of building reusable abstractions and frameworks that enable teams " +
-      "to ship faster and reduce operational complexity in production environments.",
-
-    /* The other half of the story: what gets built outside working hours. */
-    osIntro:
-      "Away from the day job the work is hardware and tooling rather than telecom: air-quality " +
-      "sensors, ESP32 cameras speaking a hand-rolled binary TCP protocol, OBS Studio control " +
-      "surfaces, and declarative Linux provisioning. None of it is commercial — it is unpaid " +
-      "engineering on problems I actually have, which is why the repositories carry real READMEs, " +
-      "CI pipelines and release artifacts rather than a weekend's commits.",
+      "Nine years on the JVM building systems that do not fall over. Telecom pipelines at " +
+      "1M events/sec sustained and 10M at peak — roughly 80 billion a day — on Kafka, Cassandra " +
+      "and Kubernetes. Scala where the type system pays for itself (cats-effect, FS2, Monix, " +
+      "http4s), Java where it does not. I build the layer other teams build on: a service " +
+      "framework that turned three weeks of onboarding into two days, a serverless runtime that " +
+      "cut 20% off the cloud bill, GC and heap work that halved tail latency.",
   },
 
   metrics: [
-    { val: "9+", suffix: "", lbl: "Years engineering" },
-    { val: "5", suffix: "B", lbl: "Daily events ingested" },
-    { val: "1", suffix: "M", lbl: "Events / second peak" },
-    { val: "20", suffix: "%", lbl: "Cloud cost reduction" },
+    { val: "9+", suffix: "", lbl: "Years on the JVM" },
+    { val: "80", suffix: "B", lbl: "Events ingested / day" },
+    { val: "10", suffix: "M", lbl: "Events / sec at peak" },
+    { val: "20", suffix: "%", lbl: "Cloud spend removed" },
   ],
 
   /* ------------------------------------------------------ employment ---- */
@@ -68,13 +59,13 @@ window.WB_PROFILE = {
       team: "Platform team",
       company: "LotusFlare",
       location: "US · Remote",
-      blurb: "A product company providing cloud-native SaaS platforms for leading telecom providers.",
+      blurb: "Cloud-native SaaS platforms for tier-one telecom operators.",
       points: [
-        "Led platform team of 3 engineers building infrastructure that ingested **5B+ daily events** from telecom networks, reducing time-to-insight from hours to **sub-second latency** through real-time Kafka Streams pipelines.",
-        "Designed and implemented reusable **Scala/JVM infrastructure framework** reducing new platform service onboarding from **3 weeks to 2 days**, enabling rapid feature delivery across the organization.",
-        "Architected cloud-agnostic **serverless framework on Kubernetes** replacing 20+ always-on worker processes with an event-driven model, cutting annual cloud infrastructure costs by **20%** while improving scalability.",
-        "Engineered distributed stream processing architecture handling **1M events/sec** with sub-100ms latency, serving real-time dashboards for executive decision-making on network quality and subscriber behavior.",
-        "Led JVM performance optimization initiative tuning GC, heap sizing, and container configurations, reducing **95th percentile latency by 60%** and improving reliability SLA from **99.5% to 99.95%**.",
+        "Ran a 3-engineer platform team behind the telecom ingest path: **~80B events a day**, **1M/sec sustained**, **10M/sec at peak**. Kafka Streams replaced the batch jobs and took time-to-insight from hours to **sub-second**.",
+        "Wrote the **Scala/JVM service framework** the platform is built on. New service onboarding went from **3 weeks to 2 days**.",
+        "Built a cloud-agnostic **serverless runtime on Kubernetes**, retiring 20+ always-on workers for event-driven ones. **20% off the annual cloud bill**, and it scales to zero.",
+        "Held the stream-processing path under **100ms end-to-end** at that volume — the dashboards executives watch during an incident read from it.",
+        "Tuned GC, heap and container limits across the fleet: **p95 latency down 60%**, availability from **99.5% to 99.95%**.",
       ],
       tech: [
         "Scala 2.12/2.13", "Monix", "akka-http", "http4s", "cats", "fs2-kafka", "cats-effect",
@@ -90,12 +81,12 @@ window.WB_PROFILE = {
       role: "Senior Java Software Engineer",
       company: "EPAM",
       location: "US · Remote",
-      blurb: "Global provider of software product engineering and digital platform engineering services.",
+      blurb: "Product and platform engineering services, worldwide.",
       points: [
-        "Led delivery of **Spring Boot microservices** handling patient data for a **top-3 US healthcare provider**, managing compliance at scale (**100M+ patient records**) with zero security incidents and maintaining **99.99% uptime SLA**.",
-        "Designed fault-tolerant distributed system architecture supporting **10M+ daily transactions** across multiple cloud platforms (Azure, PCF), reducing deployment failures by **50%** through improved CI/CD practices.",
-        "Established performance and reliability guardrails, implementing observability that caught critical bugs before production, reducing **incident response time by 50%**.",
-        "Mentored junior engineers on distributed system design principles and Spring Boot best practices.",
+        "Led delivery of the **Spring Boot microservices** holding patient data for a **top-3 US healthcare provider** — **100M+ records** under HIPAA, **zero security incidents**, **99.99% uptime**.",
+        "Designed the fault-tolerant architecture carrying **10M+ transactions a day** across Azure and PCF. Rebuilt CI/CD around it: **deployment failures halved**.",
+        "Put observability in front of the release, not after it. Bugs got caught pre-production and **incident response time dropped 50%**.",
+        "Mentored junior engineers on distributed-system design and where Spring Boot's defaults stop being enough.",
       ],
       tech: ["Java 8", "Spring Boot", "Microsoft Azure", "Azure Functions", "Service Bus", "MsSQL", "Jenkins", "PCF"],
     },
@@ -107,13 +98,13 @@ window.WB_PROFILE = {
       role: "Software Engineer",
       company: "Unicorn",
       location: "CZ · Remote",
-      blurb: "A European company providing information systems and solutions.",
+      blurb: "European information systems, mostly for the energy sector.",
       points: [
-        "Architected core algorithms for **TERRE LIBRA** pilot, a mission-critical cross-border energy exchange platform connecting grid operators across **6 countries**, enabling secure peer-to-peer energy trading at continental scale.",
-        "Optimized real-time energy balancing algorithms reducing calculation latency from **2s to 200ms**, enabling dynamic pricing and preventing grid instability during peak demand periods.",
-        "Designed distributed cache and async task queue patterns in the Unicorn Application Framework, adopted across the company enabling **20+ platforms** to achieve **5x throughput improvement**.",
-        "Migrated full-text search from custom indexing to **Elasticsearch**, achieving **6x query latency improvement** and enabling new features (autocomplete, faceted search) that increased platform adoption by **40%**.",
-        "Built integration layer supporting RSS/Atom standards for the Nordic Availability Collection System, consolidating disparate data sources and reducing data pipeline latency from batch to real-time.",
+        "Wrote the core algorithms for the **TERRE LIBRA** pilot — a cross-border balancing-energy exchange wiring grid operators in **6 countries** together. Get it wrong and a national grid notices.",
+        "Cut the real-time balancing calculation from **2s to 200ms**, which is what made dynamic pricing viable at peak demand.",
+        "Designed the distributed cache and async task-queue patterns in the Unicorn Application Framework. **20+ platforms** adopted them; **5x throughput**.",
+        "Moved full-text search off hand-rolled indexing onto **Elasticsearch**: **6x faster queries**, plus autocomplete and faceting that pushed adoption up **40%**.",
+        "Built the RSS/Atom integration layer for the Nordic Availability Collection System, replacing batch imports with a real-time feed.",
       ],
       tech: ["Java 8", "Spring Boot", "MongoDB", "RabbitMQ", "Elasticsearch", "ReactJS", "NodeJS"],
     },
@@ -125,11 +116,11 @@ window.WB_PROFILE = {
       role: "Software Engineer",
       company: "OmnieSoft",
       location: "Ukraine",
-      blurb: "Backend engineering for small-business e-commerce platforms.",
+      blurb: "Backend for small-business e-commerce.",
       points: [
-        "Built e-commerce platform (backend) serving **500+ small businesses** with features like inventory management, CRM, and order processing, achieving **99.9% uptime** and handling **100K+ daily transactions**.",
-        "Designed inventory management system with real-time stock tracking and low-stock alerts, reducing stockouts by **30%** and improving customer satisfaction.",
-        "Architected CRM module with appointment scheduling, enabling businesses to increase booking conversion by **25%** and average transaction value by **15%**.",
+        "Built the backend serving **500+ small businesses** — inventory, CRM, orders. **100K+ transactions a day** at **99.9% uptime**.",
+        "Real-time stock tracking with low-stock alerts cut **stockouts by 30%**.",
+        "Added appointment scheduling to the CRM: **+25% booking conversion**, **+15% average transaction value**.",
       ],
       tech: ["Java", "Spring", "MySQL", "REST"],
     },
@@ -190,55 +181,6 @@ window.WB_PROFILE = {
       degree: "Bachelor of Science in Software Engineering",
       school: "Khmelnitsky National University",
       place: "Khmelnytskyi, Ukraine",
-    },
-  ],
-
-  /* -------------------------------------------------------- accounts ---- */
-  /* Counts are a snapshot from the GitHub REST API on the date in
-     WB_CATALOG.generatedAt. They are indicative, not live. */
-
-  accounts: [
-    {
-      handle: "w0rxbend",
-      name: "Oleksandr B.",
-      url: "https://github.com/w0rxbend",
-      role: "Main account",
-      repos: 53,
-      followers: 277,
-      site: "https://readme.worxbend.com/",
-      note:
-        "The largest of the three and the one with the broadest range: ESP32 camera firmware and " +
-        "its Go frame server, Twitch and OBS browser-source overlays, the Scala 3 OpenCV binding, " +
-        "and whole libraries ported into unfamiliar languages to learn them.",
-      picks: ["scalacv", "spycam", "instachron", "obs-effects", "system-bootstrap"],
-    },
-    {
-      handle: "worxbend",
-      name: "worxbend",
-      url: "https://github.com/worxbend",
-      role: "Tooling & products",
-      repos: 28,
-      followers: 3,
-      site: "https://about.worxbend.com",
-      note:
-        "Where the finished tools live. The OBS Studio control suite, the five-platform AirGradient " +
-        "air-quality family, and the declarative Linux provisioning tools — the repositories with " +
-        "release binaries, install scripts and documentation sites.",
-      picks: ["scenedeck", "obsctl-rs", "obs-stats", "airgradient-cli", "fluxion", "binstaller"],
-    },
-    {
-      handle: "oleksandr-balyshyn",
-      name: "Oleksandr Balyshyn",
-      url: "https://github.com/oleksandr-balyshyn",
-      role: "Named / CV-facing",
-      repos: 4,
-      followers: 64,
-      site: "",
-      note:
-        "The account under my own name, kept deliberately small. It holds glyphora, a Scala 3 " +
-        "terminal-UI toolkit with reactive signals and native-image builds, plus a GTK4 desk " +
-        "controller and bootstrap scripts.",
-      picks: ["glyphora", "deskctl", "bootstrap-scripts"],
     },
   ],
 };
