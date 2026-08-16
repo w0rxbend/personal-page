@@ -32,12 +32,11 @@ window.WB_PROFILE = {
 
     /* Straight from the CV's Introduction section. */
     intro:
-      "Nine years on the JVM building systems that do not fall over. Telecom pipelines at " +
-      "1M events/sec sustained and 10M at peak — roughly 80 billion a day — on Kafka, Cassandra " +
-      "and Kubernetes. Scala where the type system pays for itself (cats-effect, FS2, Monix, " +
-      "http4s), Java where it does not. I build the layer other teams build on: a service " +
-      "framework that turned three weeks of onboarding into two days, a serverless runtime that " +
-      "cut 20% off the cloud bill, GC and heap work that halved tail latency.",
+      "Nine years on the JVM. Telecom ingest at 1M events/sec sustained, 10M at peak, roughly " +
+      "80 billion a day, on Kafka, Cassandra and Kubernetes. Scala where the type system pays " +
+      "for itself — cats-effect, FS2, Monix, http4s — Java where it does not. I build the layer " +
+      "other teams build on: a service framework that cut onboarding from three weeks to two " +
+      "days, a serverless runtime that took 20% off the cloud bill, GC work that halved p95.",
   },
 
   metrics: [
@@ -61,10 +60,10 @@ window.WB_PROFILE = {
       location: "US · Remote",
       blurb: "Cloud-native SaaS platforms for tier-one telecom operators.",
       points: [
-        "Ran a 3-engineer platform team behind the telecom ingest path: **~80B events a day**, **1M/sec sustained**, **10M/sec at peak**. Kafka Streams replaced the batch jobs and took time-to-insight from hours to **sub-second**.",
+        "Ran a 3-engineer platform team on the telecom ingest path: **~80B events a day**, **1M/sec sustained**, **10M/sec at peak**. Kafka Streams replaced the batch jobs. Time-to-insight: hours to **sub-second**.",
         "Wrote the **Scala/JVM service framework** the platform is built on. New service onboarding went from **3 weeks to 2 days**.",
-        "Built a cloud-agnostic **serverless runtime on Kubernetes**, retiring 20+ always-on workers for event-driven ones. **20% off the annual cloud bill**, and it scales to zero.",
-        "Held the stream-processing path under **100ms end-to-end** at that volume — the dashboards executives watch during an incident read from it.",
+        "Built a cloud-agnostic **serverless runtime on Kubernetes**. 20+ always-on workers became event-driven and now scale to zero: **20% off the annual cloud bill**.",
+        "Held the stream path under **100ms end-to-end** at that volume. The dashboards executives watch during an incident read from it.",
         "Tuned GC, heap and container limits across the fleet: **p95 latency down 60%**, availability from **99.5% to 99.95%**.",
       ],
       tech: [
@@ -84,8 +83,8 @@ window.WB_PROFILE = {
       blurb: "Product and platform engineering services, worldwide.",
       points: [
         "Led delivery of the **Spring Boot microservices** holding patient data for a **top-3 US healthcare provider** — **100M+ records** under HIPAA, **zero security incidents**, **99.99% uptime**.",
-        "Designed the fault-tolerant architecture carrying **10M+ transactions a day** across Azure and PCF. Rebuilt CI/CD around it: **deployment failures halved**.",
-        "Put observability in front of the release, not after it. Bugs got caught pre-production and **incident response time dropped 50%**.",
+        "Designed the fault-tolerant architecture carrying **10M+ transactions a day** across Azure and PCF, then rebuilt CI/CD around it: **deployment failures halved**.",
+        "Moved observability in front of the release instead of after it: bugs caught pre-production, **incident response down 50%**.",
         "Mentored junior engineers on distributed-system design and where Spring Boot's defaults stop being enough.",
       ],
       tech: ["Java 8", "Spring Boot", "Microsoft Azure", "Azure Functions", "Service Bus", "MsSQL", "Jenkins", "PCF"],
@@ -101,10 +100,10 @@ window.WB_PROFILE = {
       blurb: "European information systems, mostly for the energy sector.",
       points: [
         "Wrote the core algorithms for the **TERRE LIBRA** pilot — a cross-border balancing-energy exchange wiring grid operators in **6 countries** together. Get it wrong and a national grid notices.",
-        "Cut the real-time balancing calculation from **2s to 200ms**, which is what made dynamic pricing viable at peak demand.",
+        "Cut the real-time balancing calculation from **2s to 200ms**. That is what made dynamic pricing viable at peak demand.",
         "Designed the distributed cache and async task-queue patterns in the Unicorn Application Framework. **20+ platforms** adopted them; **5x throughput**.",
-        "Moved full-text search off hand-rolled indexing onto **Elasticsearch**: **6x faster queries**, plus autocomplete and faceting that pushed adoption up **40%**.",
-        "Built the RSS/Atom integration layer for the Nordic Availability Collection System, replacing batch imports with a real-time feed.",
+        "Moved full-text search off hand-rolled indexing onto **Elasticsearch**: **6x faster queries**, plus autocomplete and faceting — adoption up **40%**.",
+        "Built the RSS/Atom integration layer for the Nordic Availability Collection System. Batch imports became a real-time feed.",
       ],
       tech: ["Java 8", "Spring Boot", "MongoDB", "RabbitMQ", "Elasticsearch", "ReactJS", "NodeJS"],
     },
