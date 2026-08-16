@@ -625,7 +625,12 @@ kbd {
    The canvas is stretched past the h1's box so particles shoved by the cursor
    have somewhere to go instead of being clipped at the edge. */
 
-.hero-title.has-particles { position: relative; color: transparent; }
+/* Attaching the effect only establishes the positioning context the canvas
+   needs. The real text is hidden by `particles-live`, which hero-text.js adds
+   on the first frame that actually paints — so a failure anywhere in that
+   pipeline leaves an ordinary headline rather than an empty space. */
+.hero-title.has-particles { position: relative; }
+.hero-title.particles-live { color: transparent; }
 .hero-title.has-particles::selection,
 .hero-title.has-particles ::selection { color: var(--fg); }
 

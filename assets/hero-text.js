@@ -27,9 +27,15 @@
 
    The real <h1> text stays in the DOM the whole time — it is only painted
    transparent. Screen readers, search engines, text selection and find-in-page
-   all still see a normal headline. If anything here fails (no WebGL, reduced
-   motion, the low effect tier, three.js blocked) the class is never added and
-   the plain gradient headline simply stays on screen.
+   all still see a normal headline.
+
+   Crucially, the text is not hidden when the effect attaches: it is hidden on
+   the first frame that actually paints settled particles, and a watchdog tears
+   the whole thing down if that frame never arrives. The headline is a person's
+   name on their CV — the failure mode has to be "plain text", never "nothing
+   there". Anything that goes wrong here (no WebGL, three.js blocked, a shader
+   that will not link, a tab that never gets an animation frame) therefore ends
+   with the ordinary headline on screen.
 
    three.js is fetched through WBFX.loadScript, the same lazy loader the
    background layers use, so the vendor bundle is downloaded at most once and
@@ -320,6 +326,7 @@
     this.canvas.setAttribute("aria-hidden", "true");
 
     this.pointer = { x: -99999, y: -99999, tx: -99999, ty: -99999 };
+    this.painted = false;          // has a settled frame reached the screen?
     this.running = false;
     this.visible = true;
     this.start = 0;
@@ -371,6 +378,8 @@
     this.points = null;
     this.geometry = null;
 
+    /* `has-particles` only makes the h1 a positioning context for the canvas.
+       Hiding the real text is a separate class, added on first paint below. */
     this.el.appendChild(this.canvas);
     this.el.classList.add("has-particles");
 
@@ -519,21 +528,35 @@
     this.uniforms.uPointer.value.set(this.pointer.x, this.pointer.y);
 
     this.renderer.render(this.scene, this.camera);
+
+    /* Hand the headline over only once the particles are far enough through
+       the fly-in to read as text. Before that the real <h1> is still visible
+       underneath, so the two never both disappear. */
+    if (!this.painted && this.uniforms.uProgress.value >= 0.2) {
+      this.painted = true;
+      this.el.classList.add("particles-live");
+    }
   };
 
+  /* Re-sample the headline after a resize or a webfont swap. The fly-in is
+     deliberately NOT replayed: `start` keeps its original value, so uProgress
+     stays where it was and the new particles appear already settled.
+
+     Replaying it would mean every resize tick, and every late-arriving font,
+     drops the headline back to zero opacity and fades it in again — which
+     reads as flicker, and leaves the name invisible for the length of the
+     intro each time. */
   ParticleHeadline.prototype.scheduleRebuild = function () {
     var self = this;
     clearTimeout(this.rebuildTimer);
-    this.rebuildTimer = setTimeout(function () {
-      if (!self.build()) return;
-      self.start = 0;               // replay the fly-in at the new size
-    }, 220);
+    this.rebuildTimer = setTimeout(function () { self.build(); }, 220);
   };
 
   ParticleHeadline.prototype.destroy = function () {
     cancelAnimationFrame(this.raf);
     this.raf = 0;
     this.el.classList.remove("has-particles");
+    this.el.classList.remove("particles-live");
     if (this.canvas.parentNode) this.canvas.parentNode.removeChild(this.canvas);
     try { this.renderer.dispose(); } catch (e) { /* context already gone */ }
   };
@@ -576,6 +599,13 @@
       document.documentElement,
       { attributes: true, attributeFilter: ["data-theme"] }
     );
+
+    /* If no frame has painted by now, something in the pipeline is not running
+       — a driver that refused the context, a tab that never got an animation
+       frame, a shader that linked but draws nothing. Give the headline back. */
+    setTimeout(function () {
+      if (!self.painted) self.destroy();
+    }, 2500);
 
     this.raf = requestAnimationFrame(this.frame);
   };
