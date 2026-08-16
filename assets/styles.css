@@ -626,7 +626,6 @@ kbd {
    have somewhere to go instead of being clipped at the edge. */
 
 .hero-title.has-particles { position: relative; color: transparent; }
-.hero-title.has-particles .accent { background: none; color: transparent; }
 .hero-title.has-particles::selection,
 .hero-title.has-particles ::selection { color: var(--fg); }
 
@@ -673,13 +672,6 @@ kbd {
   line-height: 0.98;
   text-wrap: balance;
 }
-.hero-title .accent {
-  background: linear-gradient(105deg, var(--accent) 0%, var(--accent-2) 48%, var(--accent-3) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
 .hero-role {
   margin-top: 18px;
   color: var(--fg-muted);
