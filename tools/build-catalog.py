@@ -63,7 +63,7 @@ PAGE = os.path.join(ROOT, "index.html")
 # one capturing group, and that group is the number to overwrite.
 PAGE_COUNT_PATTERNS = [
     r"(\d+) open-source projects",          # <meta name="description"> and og:description
-    r"(\d+) public repositories",           # the hero paragraph
+    r"(\d+) public repos(?:itories)?",      # the hero paragraph, long or short form
     r"Search (\d+) projects",               # the search box placeholder
     r'id="result-count">(\d+) projects',    # the count shown before the first render
 ]
