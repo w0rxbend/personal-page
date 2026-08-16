@@ -76,6 +76,7 @@
     /* look */
     pointScale: 1.35,      // point size as a multiple of the sample spacing
     gradientSpeed: 0.11,   // how fast the accent gradient travels
+    tint: 0.42,            // how much of that gradient plain words take, 0-1
   };
 
   /* ================================================================ shaders */
@@ -149,6 +150,7 @@
     "uniform float uWidth;",
     "uniform float uTime;",
     "uniform float uGradientSpeed;",
+    "uniform float uTint;",
     "uniform float uOpacity;",
 
     "varying float vAccent;",
@@ -163,13 +165,18 @@
 
     "  float u = clamp(vX / max(uWidth, 1.0), 0.0, 1.0);",
     "  vec3 col = mix(uColorA, uColorB, u);",
-    /* The accent run gets a travelling three-stop gradient, matching the CSS
-       rule it replaces: accent → accent-2 → accent-3. */
+    /* A three-stop gradient — accent, accent-2, accent-3 — travelling slowly
+       along the headline. */
     "  float g = fract(u * 0.8 + uTime * uGradientSpeed);",
     "  vec3 acc = g < 0.5",
     "    ? mix(uAccentA, uAccentB, g * 2.0)",
     "    : mix(uAccentB, uAccentC, (g - 0.5) * 2.0);",
-    "  col = mix(col, acc, vAccent);",
+    /* Two ways in. A word inside an .accent span takes the gradient outright
+       (vAccent = 1). Everything else takes uTint of it, weighted toward the end
+       of the line, so a headline with no accent span still has colour moving
+       through it instead of sitting flat. */
+    "  float tint = uTint * (0.30 + 0.70 * u);",
+    "  col = mix(col, acc, max(vAccent, tint));",
 
     "  gl_FragColor = vec4(col, a * vFade * uOpacity);",
     "}",
@@ -363,6 +370,7 @@
       uAccentC:       { value: new THREE.Color("#c58bff") },
       uWidth:         { value: 1 },
       uGradientSpeed: { value: CONFIG.gradientSpeed },
+      uTint:          { value: CONFIG.tint },
       uOpacity:       { value: 1 },
     };
 
