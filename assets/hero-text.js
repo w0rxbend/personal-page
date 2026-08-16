@@ -324,6 +324,8 @@
 
   /* ============================================================= the effect */
 
+  var live = null;                 // the running effect, if there is one
+
   function ParticleHeadline(THREE, el) {
     this.THREE = THREE;
     this.el = el;
@@ -393,8 +395,10 @@
 
     this.onPointerMove = this.onPointerMove.bind(this);
     this.onPointerLeave = this.onPointerLeave.bind(this);
+    this.onVisibility = this.onVisibility.bind(this);
     this.frame = this.frame.bind(this);
     this.scheduleRebuild = this.scheduleRebuild.bind(this);
+    this.observers = [];
   }
 
   ParticleHeadline.prototype.fontSpec = function () {
@@ -560,13 +564,35 @@
     this.rebuildTimer = setTimeout(function () { self.build(); }, 220);
   };
 
+  /* Give the headline back and release everything: the GPU context, the frame
+     loop and every subscription. Called by the watchdog when no frame paints,
+     and when the visitor turns the effects off. */
   ParticleHeadline.prototype.destroy = function () {
+    if (live === this) live = null;      // let a later setting change restart it
     cancelAnimationFrame(this.raf);
     this.raf = 0;
+    clearTimeout(this.rebuildTimer);
+    window.removeEventListener("pointermove", this.onPointerMove);
+    window.removeEventListener("pointerdown", this.onPointerMove);
+    window.removeEventListener("resize", this.scheduleRebuild);
+    window.removeEventListener("blur", this.onPointerLeave);
+    document.removeEventListener("pointerleave", this.onPointerLeave);
+    document.removeEventListener("visibilitychange", this.onVisibility);
+    this.observers.forEach(function (o) { o.disconnect(); });
+    this.observers = [];
     this.el.classList.remove("has-particles");
     this.el.classList.remove("particles-live");
     if (this.canvas.parentNode) this.canvas.parentNode.removeChild(this.canvas);
     try { this.renderer.dispose(); } catch (e) { /* context already gone */ }
+  };
+
+  ParticleHeadline.prototype.onVisibility = function () {
+    if (document.hidden) {
+      cancelAnimationFrame(this.raf);
+      this.raf = 0;
+    } else if (!this.raf) {
+      this.raf = requestAnimationFrame(this.frame);
+    }
   };
 
   ParticleHeadline.prototype.run = function () {
@@ -579,34 +605,29 @@
     window.addEventListener("pointerdown", this.onPointerMove, { passive: true });
     document.addEventListener("pointerleave", this.onPointerLeave);
     window.addEventListener("blur", this.onPointerLeave);
+    document.addEventListener("visibilitychange", this.onVisibility);
+
+    function watch(observer, target, options) {
+      observer.observe(target, options);
+      self.observers.push(observer);
+    }
 
     if ("ResizeObserver" in window) {
-      new ResizeObserver(this.scheduleRebuild).observe(this.el);
+      watch(new ResizeObserver(this.scheduleRebuild), this.el);
     } else {
       window.addEventListener("resize", this.scheduleRebuild);
     }
 
     /* Only burn frames while the headline is actually on screen. */
     if ("IntersectionObserver" in window) {
-      new IntersectionObserver(function (entries) {
+      watch(new IntersectionObserver(function (entries) {
         self.visible = entries[0].isIntersecting;
-      }, { rootMargin: "120px" }).observe(this.el);
+      }, { rootMargin: "120px" }), this.el);
     }
 
-    document.addEventListener("visibilitychange", function () {
-      if (document.hidden) {
-        cancelAnimationFrame(self.raf);
-        self.raf = 0;
-      } else if (!self.raf) {
-        self.raf = requestAnimationFrame(self.frame);
-      }
-    });
-
-    /* The theme swatches and the motion switch both live on <html>. */
-    new MutationObserver(function () { self.syncTheme(); }).observe(
-      document.documentElement,
-      { attributes: true, attributeFilter: ["data-theme"] }
-    );
+    /* The theme swatches live on <html>. */
+    watch(new MutationObserver(function () { self.syncTheme(); }),
+      document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 
     /* If no frame has painted by now, something in the pipeline is not running
        — a driver that refused the context, a tab that never got an animation
@@ -639,7 +660,7 @@
   }
 
   function init() {
-    if (!window.WBFX || !wanted()) return;
+    if (!window.WBFX || !wanted() || live) return;
 
     var el = document.querySelector(CONFIG.selector);
     if (!el) return;
@@ -653,11 +674,12 @@
         effect = new ParticleHeadline(THREE, el);
         if (!effect.build()) throw new Error("no samples");
       } catch (e) {
-        /* Leave the plain gradient headline exactly as it was. */
+        /* Leave the plain headline exactly as it was. */
         if (effect) effect.destroy();
         return;
       }
 
+      live = effect;
       effect.run();
 
       /* Webfonts usually land after this runs; remeasure once they do, or the
@@ -667,6 +689,17 @@
       }
     }).catch(function () { /* three.js unavailable — plain headline stands */ });
   }
+
+  /* The settings drawer writes the effect level to data-fx and the motion
+     preference to data-motion, both on <html>. Watching them means the effect
+     starts and stops with the setting instead of needing a reload. */
+  new MutationObserver(function () {
+    if (wanted()) init();
+    else if (live) { live.destroy(); live = null; }
+  }).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["data-fx", "data-motion"],
+  });
 
   /* app.js starts WBFX during its own boot, so wait for the load event: by then
      a tier has been chosen and wanted() can give a real answer. */

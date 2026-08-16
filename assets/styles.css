@@ -594,8 +594,8 @@ kbd {
 @media (min-width: 1080px) {
   .hero-inner {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(280px, 400px);
-    gap: clamp(32px, 4vw, 64px);
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 440px);
+    gap: 48px;
     align-items: center;
   }
   .hero-orb {

@@ -25,8 +25,9 @@
    plasma glow rather than the look of a lit plastic ball.
 
    Purely decorative: the host element is aria-hidden, the whole thing is
-   skipped under reduced motion and on the cheap effect tiers, and if WebGL or
-   three.js is unavailable the hero simply has an empty column there.
+   skipped under reduced motion and when background effects are turned off, and
+   if WebGL or three.js is unavailable the hero simply has an empty column
+   there.
    ========================================================================= */
 
 (function () {
@@ -301,6 +302,8 @@
 
   /* ==================================================================== orb */
 
+  var live = null;                 // the running HeroOrb, if there is one
+
   function HeroOrb(THREE, host) {
     this.THREE = THREE;
     this.host = host;
@@ -378,8 +381,10 @@
     this.group.add(this.makeSparks());
 
     this.onPointerMove = this.onPointerMove.bind(this);
+    this.onVisibility = this.onVisibility.bind(this);
     this.frame = this.frame.bind(this);
     this.resize = this.resize.bind(this);
+    this.observers = [];
   }
 
   /* A shell of points scattered on a sphere a little wider than the orb. */
@@ -494,57 +499,86 @@
     this.renderer.render(this.scene, this.camera);
   };
 
+  HeroOrb.prototype.onVisibility = function () {
+    if (document.hidden) {
+      cancelAnimationFrame(this.raf);
+      this.raf = 0;
+      this.last = 0;
+    } else if (!this.raf) {
+      this.raf = requestAnimationFrame(this.frame);
+    }
+  };
+
   HeroOrb.prototype.run = function () {
     var self = this;
     this.resize();
     this.syncTheme();
 
     window.addEventListener("pointermove", this.onPointerMove, { passive: true });
+    document.addEventListener("visibilitychange", this.onVisibility);
+
+    function watch(observer, target, options) {
+      observer.observe(target, options);
+      self.observers.push(observer);
+    }
 
     if ("ResizeObserver" in window) {
-      new ResizeObserver(this.resize).observe(this.host);
+      watch(new ResizeObserver(this.resize), this.host);
     } else {
       window.addEventListener("resize", this.resize);
     }
 
     if ("IntersectionObserver" in window) {
-      new IntersectionObserver(function (entries) {
+      watch(new IntersectionObserver(function (entries) {
         self.visible = entries[0].isIntersecting;
-      }, { rootMargin: "160px" }).observe(this.host);
+      }, { rootMargin: "160px" }), this.host);
     }
 
-    document.addEventListener("visibilitychange", function () {
-      if (document.hidden) {
-        cancelAnimationFrame(self.raf);
-        self.raf = 0;
-        self.last = 0;
-      } else if (!self.raf) {
-        self.raf = requestAnimationFrame(self.frame);
-      }
-    });
-
-    new MutationObserver(function () { self.syncTheme(); }).observe(
-      document.documentElement,
-      { attributes: true, attributeFilter: ["data-theme"] }
-    );
+    watch(new MutationObserver(function () { self.syncTheme(); }),
+      document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 
     this.raf = requestAnimationFrame(this.frame);
   };
 
+  /* Release the GPU context and every subscription. Called when the visitor
+     turns the effects down, so switching to "Light" actually stops the work
+     rather than merely hiding it. */
+  HeroOrb.prototype.destroy = function () {
+    if (live === this) live = null;      // let a later setting change restart it
+    cancelAnimationFrame(this.raf);
+    this.raf = 0;
+    window.removeEventListener("pointermove", this.onPointerMove);
+    window.removeEventListener("resize", this.resize);
+    document.removeEventListener("visibilitychange", this.onVisibility);
+    this.observers.forEach(function (o) { o.disconnect(); });
+    this.observers = [];
+    this.host.classList.remove("is-live");
+    if (this.canvas.parentNode) this.canvas.parentNode.removeChild(this.canvas);
+    try { this.renderer.dispose(); } catch (e) { /* context already gone */ }
+  };
+
   /* =================================================================== boot */
 
+  /* The orb is skipped when motion is off, and when the visitor has turned
+     background effects off entirely — that setting means "stop painting
+     things", and the orb is a painted thing.
+
+     It is deliberately NOT restricted to the top tier. The tier heuristic
+     exists to protect weak machines from full-viewport layers; the orb is a
+     single bounded canvas in one hero column, it is display:none below 1080px
+     anyway, and gating it behind `high` meant almost nobody ever saw it. */
   function wanted() {
     var root = document.documentElement;
     if (root.getAttribute("data-motion") === "off") return false;
     if (root.getAttribute("data-motion") !== "on" &&
         window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
-    /* Only the top tier: this is a second WebGL context on top of the
-       background layers, and it is the most expensive thing on the page. */
-    return window.WBFX && window.WBFX.tier() === "high";
+    if (!window.WBFX) return false;
+    var tier = window.WBFX.tier();
+    return tier === "medium" || tier === "high";
   }
 
   function init() {
-    if (!wanted()) return;
+    if (!wanted() || live) return;
 
     var host = document.getElementById(CONFIG.hostId);
     if (!host) return;
@@ -567,13 +601,27 @@
       var THREE = window.THREE;
       if (!THREE || !wanted()) return;
       try {
-        new HeroOrb(THREE, host).run();
+        live = new HeroOrb(THREE, host);
+        live.run();
         host.classList.add("is-live");
       } catch (e) {
+        live = null;
         host.innerHTML = "";
       }
     }).catch(function () { /* three.js unavailable — the column stays empty */ });
   }
+
+  /* The settings drawer writes the effect level to data-fx and the motion
+     preference to data-motion, both on <html>. Watching them means switching
+     to "Full" starts the orb there and then, and switching to "Off" stops it,
+     instead of either needing a reload. */
+  new MutationObserver(function () {
+    if (wanted()) init();
+    else if (live) { live.destroy(); live = null; }
+  }).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["data-fx", "data-motion"],
+  });
 
   /* app.js starts WBFX during its own boot, so wait for the load event: by then
      a tier has been chosen and wanted() can give a real answer. */
