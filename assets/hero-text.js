@@ -583,15 +583,21 @@
   /* =================================================================== boot */
 
   /* The effect is decoration, so it only runs where decoration is wanted: not
-     under reduced motion, not with the motion switch off, and only on the top
-     effect tier. The lower tiers exist precisely to stop the page opening WebGL
-     contexts on hardware that will not enjoy them. */
+     under reduced motion and not with the motion switch off.
+
+     It runs from the "medium" tier upward, unlike the orb. One small canvas the
+     size of the headline is a very different cost from a full-viewport scene,
+     and this is the effect the page is actually built around — gating it behind
+     the top tier meant most visitors never saw it. The "low" tier still gets
+     the plain gradient headline and no WebGL context at all. */
   function wanted() {
     var root = document.documentElement;
     if (root.getAttribute("data-motion") === "off") return false;
     if (root.getAttribute("data-motion") !== "on" &&
         window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
-    return !!window.WBFX && window.WBFX.tier() === "high";
+    if (!window.WBFX) return false;
+    var tier = window.WBFX.tier();
+    return tier === "medium" || tier === "high";
   }
 
   function init() {

@@ -168,7 +168,8 @@ A single dial, the **tier**, decides which layers exist:
 The two hero effects — `assets/hero-text.js` and `assets/hero-orb.js` — sit
 outside the layer registry, because they are anchored to elements in the page
 rather than to the full-viewport background stack. They read the same tier and
-the same `--fx-*` palette, and they run only at `high`.
+the same `--fx-*` palette. The headline runs from `medium` upward — one
+canvas the size of an `<h1>` is cheap — and the orb only at `high`.
 
 The tier is chosen from CPU cores, device memory, pointer type, the Save-Data
 header and the reduce-motion preference, and can be overridden in the settings
